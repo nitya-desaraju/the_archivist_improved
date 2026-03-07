@@ -1322,6 +1322,18 @@
                     setTimeout(() => {
                         document.body.style.backgroundColor = "black";
                         document.body.innerHTML = ""; 
+
+                        setTimeout(() => {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'crt-effect p-4';
+                            
+                            const menuBtn = createReturnButton();
+                            wrapper.appendChild(menuBtn);
+
+                            document.body.className = "bg-black h-screen flex justify-center items-center overflow-hidden";
+                            document.body.appendChild(wrapper);
+                        }, 1000);
+
                     }, 1500);
                 }, 1500);
             }, 350); 
