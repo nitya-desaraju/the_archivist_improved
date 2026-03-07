@@ -202,6 +202,19 @@
             75% { transform: translate(1px, 1px); }
             100% { transform: translate(0, 0); }
         }
+
+        @keyframes tv-off {
+            0% { transform: scale(1, 1); filter: brightness(1); }
+            40% { transform: scale(1, 0.005); filter: brightness(2); }
+            70% { transform: scale(0.005, 0.005); filter: brightness(5); }
+            90% { transform: scale(0.002, 0.002); opacity: 1; }
+            100% { transform: scale(0, 0); opacity: 0; }
+        }
+
+        .shutdown-animation {
+            animation: tv-off 1.5s ease-in forwards;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -803,7 +816,6 @@
         }
 
         function handlePuzzleFailure(file, reason) {
-            console.log(`Puzzle failed: ${reason}`);
             clearTimeout(puzzleTimer);
             clearInterval(puzzleTimerInterval);
 
@@ -822,7 +834,7 @@
             movementMediumThreshold: 700000, //1500000
             movementHighThreshold: 1000000, //2000000
             transferTime: 10000,
-            filesToTransfer: 20,
+            filesToTransfer: 1,
             maxStrikes: 3,
             smoothingFactor: 0.04,
             watchedFiles: 12
@@ -1028,7 +1040,6 @@
                 }
 
                 if (isCriticalNoise || isCriticalMoving) {
-                    console.log('Failure: AI Activity Detected');
                     clearTimeout(puzzleTimer);
                     clearInterval(puzzleTimerInterval);
                     document.getElementById('puzzle-view').style.display = 'none';
@@ -1299,25 +1310,24 @@
         function handleEndingNo() {
             gameContainer.innerHTML = `
                 <div id="mercy-ending" class="w-full h-full flex flex-col justify-center items-center">
-                    <p id="thank-you-text" class="text-2xl text-green-400"></p>
-                    <div id="button-container"></div>
+                    <p id="thank-you-text" class="text-3xl text-green-400 font-bold" style="font-family: 'VT323', monospace;"></p>
                 </div>
             `;
             const thankYouEl = document.getElementById('thank-you-text');
-            const buttonContainer = document.getElementById('button-container');
-
-            const button = createReturnButton();
-            button.style.visibility = 'hidden';
-            buttonContainer.appendChild(button);
 
             typewriterEffect("thank you...", thankYouEl, () => {
                 setTimeout(() => {
-                    button.style.visibility = 'visible';
-                }, 2000);
-            });
+                    document.body.classList.add('shutdown-animation');
+                    
+                    setTimeout(() => {
+                        document.body.style.backgroundColor = "black";
+                        document.body.innerHTML = ""; 
+                    }, 1500);
+                }, 1500);
+            }, 350); 
         }
         
-        function typewriterEffect(text, element, callback) {
+        function typewriterEffect(text, element, callback, speed = 150) {
             let i = 0;
             element.innerHTML = ''; 
             const typing = setInterval(() => {
@@ -1328,7 +1338,7 @@
                     clearInterval(typing);
                     if (callback) callback();
                 }
-            }, 150);
+            }, speed);
         }
 
         function createReturnButton() {
