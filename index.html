@@ -1075,6 +1075,8 @@
         }
 
         function viewFile(fileId, isInitial = false, failureType = null) {
+            if (gameState.isWatching) return;
+
             if (gameState.missionComplete) {
                 document.querySelectorAll('#file-list button').forEach(btn => btn.classList.remove('bg-green-900'));
                 if(fileId) {
@@ -1090,7 +1092,6 @@
                 if(selectedButton) selectedButton.classList.add('bg-green-900');
             }
 
-
             if (isInitial) {
                 fileContentViewerEl.innerHTML = `<p>> Select a file from the directory to view its contents.</p>`;
                 return;
@@ -1100,7 +1101,6 @@
             const file = masterFileList.find(f => f.id === idAsNumber);
 
             if (!file) {
-                console.error("Could not find file with ID:", fileId);
                 return;
             }
             gameState.activeFile = file;
