@@ -1,5 +1,5 @@
-<!DOCTYPE html>  
-<html lang="en"> 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device_width, initial-scale=1.0">
@@ -138,6 +138,7 @@
             border: 2px solid blue;
             z-index: 9999;
         } */
+         
         .static-bg {
             overflow: hidden;
             position: relative;
@@ -176,10 +177,36 @@
         #confirm-no-btn.hover-small-text:hover {
             font-size: 1.0rem;
         }
+
+        #glitch-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0a0a;
+            z-index: -1; 
+            pointer-events: none;
+        }
+
+        .glitch-warning {
+            animation: background-shake 0.15s infinite;
+            background-color: #1a0505 !important; 
+            filter: hue-rotate(15deg) brightness(1.1);
+        }
+
+        @keyframes background-shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(0, 0); }
+        }
     </style>
 </head>
 
 <body class="bg-black text-gray-300">
+    <div id="glitch-bg"></div>
     <div class="scanline"></div>
     <div id="game-container" class="w-full h-full relative crt-effect p-2 flex flex-col">
         <video id="video" playsinline autoplay muted></video>
@@ -986,18 +1013,33 @@
             analyzeNoise();
             analyzeMovement();
 
+            const glitchBg = document.getElementById('glitch-bg');
+
+            const isNoisy = gameState.noiseLevel > config.noiseMediumThreshold;
+            const isMoving = gameState.movementLevel > config.movementMediumThreshold;
+            const isCriticalNoise = gameState.noiseLevel > config.noiseHighThreshold;
+            const isCriticalMoving = gameState.movementLevel > config.movementHighThreshold;
+
             if (gameState.isWatching) {
-                const isNoisy = gameState.noiseLevel > config.noiseHighThreshold;
-                const isMoving = gameState.movementLevel > config.movementHighThreshold;
                 if (isNoisy || isMoving) {
+                    glitchBg.classList.add('glitch-warning');
+                } else {
+                    glitchBg.classList.remove('glitch-warning');
+                }
+
+                if (isCriticalNoise || isCriticalMoving) {
                     console.log('Failure: AI Activity Detected');
                     clearTimeout(puzzleTimer);
                     clearInterval(puzzleTimerInterval);
                     document.getElementById('puzzle-view').style.display = 'none';
                     document.getElementById('puzzle-instructions').classList.add('hidden');
+                    glitchBg.classList.remove('glitch-warning');
                     handleTransferFailure(gameState.activeFile);
                 }
+            } else {
+                glitchBg.classList.remove('glitch-warning');
             }
+            
             requestAnimationFrame(gameLoop);
         }
 
