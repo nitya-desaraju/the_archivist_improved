@@ -1020,19 +1020,19 @@
         }
 
         function gameLoop() {
-            if (gameState.missionComplete) return;
-
             analyzeNoise();
             analyzeMovement();
 
             const glitchBg = document.getElementById('glitch-bg');
+            
+            if (!glitchBg) return; 
 
             const isNoisy = gameState.noiseLevel > config.noiseMediumThreshold;
             const isMoving = gameState.movementLevel > config.movementMediumThreshold;
             const isCriticalNoise = gameState.noiseLevel > config.noiseHighThreshold;
             const isCriticalMoving = gameState.movementLevel > config.movementHighThreshold;
 
-            if (gameState.isWatching) {
+            if (!gameState.missionComplete && gameState.isWatching) {
                 if (isNoisy || isMoving) {
                     glitchBg.classList.add('glitch-warning');
                 } else {
