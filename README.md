@@ -1,6 +1,6 @@
 # The Archivist
 
-The Archivist is a web-based psychological thriller game. You are a technician transferring corrupted files from an old data server to a new one. But beware. An AI anomaly lurks between. It can be played [here](https://nitya-desaraju.github.io/the-archivist-game/).
+The Archivist is a web-based psychological thriller game. You are a technician transferring corrupted files from an old data server to a new one. But beware. An AI anomaly lurks between. It can be played [here](https://nitya-desaraju.github.io/the_archivist_improved/).
 
 ## Introduction
 
