@@ -24,7 +24,3 @@ Of course, I learned a lot of styling to achieve the look that fit with the them
 ## How to play
 
 Click on each file in the file directory and complete the puzzles to decrypt and transfer them to the secure server. However, the AI archivist might watch and listen to you as you solve a puzzle, so don't move and breathe quietly. Once you finish, decommission the server to disable the rogue AI. Make your choice...
-
-#### AI Usage
-
-My code is about 25% AI. I used it to help me debug and fill in some knowledge gaps.
