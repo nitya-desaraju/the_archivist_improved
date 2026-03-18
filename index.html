@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device_width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Archivist Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=VT323&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -222,7 +222,19 @@
             align-items: center;
             padding: 0; 
             margin: 0 auto;
-            min-height: 160px; 
+            min-height: 160px;
+            border: 1px solid #4b5563 !important; 
+            
+            box-sizing: border-box;
+            line-height: 0; 
+            font-size: 0; 
+            overflow: hidden; 
+        }
+
+        #puzzle-area > * {
+            box-sizing: border-box;
+            font-family: 'Courier Prime', monospace;
+            vertical-align: top;
         }
 
         #main-panel {
@@ -301,7 +313,7 @@
                         <div id="puzzle-view" class="text-center">
                             <p id="puzzle-timer-container" class="text-yellow-400">DECRYPTION REQUIRED: <span id="puzzle-timer"></span>s</p>
                             <p id="transfer-warning" class="text-red-500 mt-1 hidden">WARNING: Anomaly is actively scanning.</p>
-                            <div id="puzzle-area" class="mt-2 p-2 border border-gray-700 bg-black bg-opacity-25 flex justify-center items-center min-h-[150px]">
+                            <div id="puzzle-area" class="mt-2 border border-gray-700 bg-black bg-opacity-25 flex justify-center items-center min-h-[150px]">
                                 <canvas id="maze-canvas"></canvas>
                             </div>
                             <p id="puzzle-name" class="text-lg font-bold mt-3 hidden"></p>
@@ -337,6 +349,13 @@
         let puzzleTimer, puzzleTimerInterval;
         let humNodes = null;
         let endingStaticAudio = null;
+
+        function resetPuzzleArea() {
+            const puzzleArea = document.getElementById('puzzle-area');
+            puzzleArea.innerHTML = '';
+            puzzleArea.removeAttribute('style'); 
+            puzzleArea.style.display = 'flex'; 
+        }
 
         function startGlitchHum() {
             if (humNodes || !audioContext) return;
@@ -499,12 +518,16 @@
             duration: 7000,
             instructionText: 'Click the numbers in numerical order.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
-                puzzleArea.innerHTML = '';
+
                 puzzleArea.style.display = 'grid';
                 puzzleArea.style.gridTemplateColumns = 'repeat(3, 1fr)';
                 puzzleArea.style.gap = '8px';
                 puzzleArea.style.width = '100%';
+                puzzleArea.style.padding = '8px';
+                puzzleArea.style.fontSize = '0';
+                puzzleArea.style.lineHeight = '0';
 
                 let nextExpectedNumber = 1;
                 const numbers = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
@@ -512,7 +535,8 @@
 
                 numbers.forEach(num => {
                     const button = document.createElement('button');
-                    button.className = 'bg-gray-800 border border-gray-600 text-2xl aspect-square hover:bg-gray-700 transition-colors';
+                    button.className = 'bg-gray-800 border border-gray-600 text-2xl aspect-square hover:bg-gray-700 transition-colors text-white';
+                    button.style.fontSize = '1.5rem';
                     button.textContent = num;
                     button.onclick = () => {
                         playSFX('clack');
@@ -540,6 +564,7 @@
             duration: 10000,
             instructionText: 'Click to rotate the middle segments and align all five wires.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
                 puzzleArea.innerHTML = '';
                 puzzleArea.style.display = 'flex';
@@ -617,6 +642,7 @@
             duration: 15000,
             instructionText: 'Hold the buttons to fill the energy to the highlighted zones.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
                 puzzleArea.innerHTML = '';
                 puzzleArea.style.display = 'flex';
@@ -720,6 +746,7 @@
             duration: 20000,
             instructionText: 'Click and drag a path from the green node to the red node without touching the walls.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
                 puzzleArea.innerHTML = '<canvas id="maze-canvas" width="300" height="150"></canvas>';
                 const canvas = document.getElementById('maze-canvas');
@@ -887,6 +914,7 @@
             duration: 15000,
             instructionText: 'Adjust sliders to match the blue target waveform.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
                 puzzleArea.innerHTML = `
                     <div class="w-full flex flex-col items-center">
@@ -919,7 +947,11 @@
                     phase: parseFloat(phaseSlider.value),
                 };
 
-                const tolerance = { amp: 1, wave: 2, phase: 0.1 };
+                const tolerance = { 
+                    amp: 3,   
+                    wave: 5,  
+                    phase: 0.3
+                };
 
                 const isInitialMatch = () => Math.abs(playerWave.amp - targetWave.amp) < tolerance.amp &&
                                           Math.abs(playerWave.wave - targetWave.wave) < tolerance.wave &&
@@ -982,8 +1014,8 @@
             duration: 25000,
             instructionText: 'Rotate each piece of the security camera feed until the file is fully decrypted.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
-                puzzleArea.innerHTML = '';
                 
                 const squareSize = 50;
                 const cols = 5;
@@ -992,13 +1024,14 @@
                 puzzleArea.style.display = 'grid';
                 puzzleArea.style.gridTemplateColumns = `repeat(${cols}, ${squareSize}px)`;
                 puzzleArea.style.gridTemplateRows = `repeat(${rows}, ${squareSize}px)`;
-                puzzleArea.style.width = `${cols * squareSize}px`;
-                puzzleArea.style.height = `${rows * squareSize}px`;
-                puzzleArea.style.padding = "0";
-                puzzleArea.style.margin = "0 auto";
-                puzzleArea.style.border = '1px solid #4b5563'; 
-                puzzleArea.style.overflow = 'hidden';
-                puzzleArea.style.boxSizing = 'content-box';
+                
+                puzzleArea.style.width = 'max-content'; 
+                puzzleArea.style.height = 'max-content';
+                puzzleArea.style.margin = '10px auto';
+                puzzleArea.style.fontSize = '0';
+                puzzleArea.style.lineHeight = '0';
+                puzzleArea.style.border = '1px solid #4b5563';
+                puzzleArea.style.padding = '0';
 
                 const pieces = [];
                 let isLocked = false;
@@ -1068,6 +1101,7 @@
             duration: 10000,
             instructionText: 'Adjust the temperature until it matches the desired temperature on the left.',
             init: function(file) {
+                resetPuzzleArea();
                 const puzzleArea = document.getElementById('puzzle-area');
                 puzzleArea.innerHTML = '';
                 
@@ -1117,7 +1151,6 @@
                 const updateTemp = (change) => {
                     if (isLocked) return;
                     currentTemp += change;
-                    // Constrain between 0 and 100
                     if (currentTemp > 100) currentTemp = 100;
                     if (currentTemp < 0) currentTemp = 0;
                     
@@ -1195,12 +1228,12 @@
 
         //adjusted thresholds
         const config = {
-            noiseMediumThreshold: 0.15,
-            noiseHighThreshold: 0.4, //0.5,
+            noiseMediumThreshold: 0.2,
+            noiseHighThreshold: 0.5, //0.4,
             movementMediumThreshold: 700000, //1500000
             movementHighThreshold: 1000000, //2000000
             transferTime: 10000,
-            filesToTransfer: 1,
+            filesToTransfer: 20,
             maxStrikes: 3,
             smoothingFactor: 0.04,
             watchedFiles: 12
